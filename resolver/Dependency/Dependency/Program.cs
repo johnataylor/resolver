@@ -43,8 +43,10 @@ namespace Resolver
         static void Test3()
         {
             Gallery gallery = TestGallery.Create1();
-            PNode node = MetadataTree.GetTree(new string[] { "C" }, gallery);
-            node.WriteTo(Console.Out);
+            PNode pnode = MetadataTree.GetTree(new string[] { "C" }, gallery);
+            pnode.WriteTo(Console.Out);
+
+            Runner.Run(pnode);
         }
 
         static void Test4()
@@ -191,11 +193,11 @@ namespace Resolver
                 //Test0();
                 //Test1();
                 //Test2();
-                //Test3();
+                Test3();
                 //Test4();
                 //Test5();
                 //Test6();
-                Test7();
+                //Test7();
             }
             catch (Exception e)
             {

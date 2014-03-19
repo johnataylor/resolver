@@ -26,7 +26,7 @@ namespace Resolver
             gallery.AddPackage(new Package("B", "2.0.0"));
             gallery.AddPackage(new Package("B", "2.5.0"));
             gallery.AddPackage(new Package("B", "3.0.0"));
-            gallery.AddPackage(new Package("B", "3.5.0"));
+            gallery.AddPackage(new Package("B", "3.5.0", new Dictionary<string, string> { { "A", "4.0.0" } }));
             gallery.AddPackage(new Package("B", "4.0.0"));
 
             gallery.AddPackage(new Package("C", "1.0.0", new Dictionary<string, string> { { "A", "2.0.0" }, { "B", "[1.0.0,2.0.0)" } }));

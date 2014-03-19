@@ -59,5 +59,70 @@ namespace Resolver.Resolver
                 }
             }
         }
+
+        public static bool Satisfy(PNode pnode, List<Tuple<string, SemanticVersion>> candidate)
+        {
+            IDictionary<string, SemanticVersion> dictionary = new Dictionary<string, SemanticVersion>();
+            foreach (Tuple<string, SemanticVersion> item in candidate)
+            {
+                dictionary.Add(item.Item1, item.Item2);
+            }
+            dictionary.Add("$", new SemanticVersion(0));
+
+            return Satisfy(pnode, dictionary);
+        }
+
+        private static bool Satisfy(PNode pnode, IDictionary<string, SemanticVersion> dictionary)
+        {
+            if (pnode.Children.Count == 0)
+            {
+                return true;
+            }
+
+            foreach (PVNode child in pnode.Children)
+            {
+                if (Satisfy(child, pnode.Id, dictionary))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private static bool Satisfy(PVNode pvnode, string id, IDictionary<string, SemanticVersion> dictionary)
+        {
+            if (dictionary.Contains(new KeyValuePair<string, SemanticVersion>(id, pvnode.Version), new KeySemantciVersionEqualityComparer()))
+            {
+                if (pvnode.Children.Count == 0)
+                {
+                    return true;
+                }
+
+                foreach (PNode child in pvnode.Children)
+                {
+                    if (!Satisfy(child, dictionary))
+                    {
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+            return false;
+        }
+
+        class KeySemantciVersionEqualityComparer : EqualityComparer<KeyValuePair<string, SemanticVersion>>
+        {
+            public override bool Equals(KeyValuePair<string, SemanticVersion> x, KeyValuePair<string, SemanticVersion> y)
+            {
+                return (x.Key == y.Key) && (SemanticVersionRange.DefaultComparer.Compare(x.Value, y.Value) == 0);
+            }
+
+            public override int GetHashCode(KeyValuePair<string, SemanticVersion> obj)
+            {
+                return obj.GetHashCode(); 
+            }
+        }
     }
 }

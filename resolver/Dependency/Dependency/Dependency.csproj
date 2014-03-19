@@ -54,6 +54,8 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Resolver\MetadataTree.cs" />
+    <Compile Include="Resolver\Participants.cs" />
+    <Compile Include="Resolver\Permutations.cs" />
     <Compile Include="Resolver\PNode.cs" />
     <Compile Include="Resolver\PVNode.cs" />
     <Compile Include="Resolver\Runner.cs" />
