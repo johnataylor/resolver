@@ -24,11 +24,15 @@ namespace Resolver.Resolver
 
             Permutations.Run(run, (xl) =>
             {
+                //Print(xl);
+
                 if (MetadataTree.Satisfy(pnode, xl))
                 {
                     //Console.Write("GOOD: ");
                     //Print(xl);
                     //Console.WriteLine();
+
+                    //Console.WriteLine(" GOOD");
 
                     good++;
                 }
@@ -37,6 +41,8 @@ namespace Resolver.Resolver
                     //Console.Write("BAD: ");
                     //Print(xl);
                     //Console.WriteLine();
+
+                    //Console.WriteLine(" BAD");
 
                     bad++;
                 }
@@ -47,6 +53,14 @@ namespace Resolver.Resolver
             Console.WriteLine("duration: {0} seconds", (after - before).TotalSeconds);
 
             Console.WriteLine("good: {0} bad: {1}", good, bad);
+        }
+
+        static void Print(List<Tuple<string, SemanticVersion>> list)
+        {
+            foreach (Tuple<string, SemanticVersion> item in list)
+            {
+                Console.Write("{0}({1}) ", item.Item1, item.Item2);
+            }
         }
     }
 }

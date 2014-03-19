@@ -42,11 +42,13 @@ namespace Resolver
 
         static void Test3()
         {
-            Gallery gallery = TestGallery.Create1();
-            PNode pnode = MetadataTree.GetTree(new string[] { "C" }, gallery);
+            Gallery gallery = TestGallery.Create4();
+            PNode pnode = MetadataTree.GetTree(new string[] { "D", "E", "F", "G", "H", "K" }, gallery);
             pnode.WriteTo(Console.Out);
 
-            Runner.Run(pnode);
+            List<PNode> independentTrees = TreeSplitter.FindIndependentTrees(pnode);
+
+            //Runner.Run(pnode);
         }
 
         static void Test4()

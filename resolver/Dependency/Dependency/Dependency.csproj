@@ -59,6 +59,7 @@
     <Compile Include="Resolver\PNode.cs" />
     <Compile Include="Resolver\PVNode.cs" />
     <Compile Include="Resolver\Runner.cs" />
+    <Compile Include="Resolver\TreeSplitter.cs" />
     <Compile Include="Resolver\Utils.cs" />
     <Compile Include="TestGallery.cs" />
   </ItemGroup>
