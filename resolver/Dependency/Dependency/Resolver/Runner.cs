@@ -9,57 +9,63 @@ namespace Resolver.Resolver
 {
     public class Runner
     {
-        public static void Run(PNode pnode)
+        public static void Simulate(PNode pnode, List<Tuple<string, SemanticVersion>>[] lineup, bool verbose)
         {
-            IDictionary<string, ISet<SemanticVersion>> participants = Participants.GetParticipants(pnode);
-
-            List<Tuple<string, SemanticVersion>>[] run = Permutations.SortParticipants(participants);
-
-            Console.WriteLine("iterations = {0}", Permutations.CountIterations(run));
-
             int good = 0;
             int bad = 0;
 
             DateTime before = DateTime.Now;
 
-            Permutations.Run(run, (xl) =>
+            Permutations.Run(lineup, (candidate) =>
             {
-                //Print(xl);
-
-                if (MetadataTree.Satisfy(pnode, xl))
+                if (MetadataTree.Satisfy(pnode, candidate))
                 {
-                    //Console.Write("GOOD: ");
-                    //Print(xl);
-                    //Console.WriteLine();
-
-                    //Console.WriteLine(" GOOD");
-
+                    if (verbose)
+                    {
+                        Console.Write("GOOD: ");
+                        Print(candidate);
+                        Console.WriteLine();
+                    }
                     good++;
                 }
                 else
                 {
-                    //Console.Write("BAD: ");
-                    //Print(xl);
-                    //Console.WriteLine();
-
-                    //Console.WriteLine(" BAD");
-
+                    if (verbose)
+                    {
+                        Console.Write("BAD: ");
+                        Print(candidate);
+                        Console.WriteLine();
+                    }
                     bad++;
                 }
+                return false;
             });
 
             DateTime after = DateTime.Now;
-
             Console.WriteLine("duration: {0} seconds", (after - before).TotalSeconds);
-
             Console.WriteLine("good: {0} bad: {1}", good, bad);
+        }
+
+        public static List<Tuple<string, SemanticVersion>> FindFirst(PNode pnode, List<Tuple<string, SemanticVersion>>[] lineup)
+        {
+            List<Tuple<string, SemanticVersion>> solution = null;
+            Permutations.Run(lineup, (candidate) =>
+            {
+                if (MetadataTree.Satisfy(pnode, candidate))
+                {
+                    solution = candidate;
+                    return true;
+                }
+                return false;
+            });
+            return solution;
         }
 
         static void Print(List<Tuple<string, SemanticVersion>> list)
         {
             foreach (Tuple<string, SemanticVersion> item in list)
             {
-                Console.Write("{0}({1}) ", item.Item1, item.Item2);
+                Console.Write("{0}/{1} ", item.Item1, item.Item2);
             }
         }
     }

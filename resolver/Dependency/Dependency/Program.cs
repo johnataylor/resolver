@@ -44,11 +44,45 @@ namespace Resolver
         {
             Gallery gallery = TestGallery.Create4();
             PNode pnode = MetadataTree.GetTree(new string[] { "D", "E", "F", "G", "H", "K" }, gallery);
-            pnode.WriteTo(Console.Out);
+            //PNode pnode = MetadataTree.GetTree(new string[] { "D", "E", "F", "G", "H" }, gallery);
+            
+            //pnode.WriteTo(Console.Out);
 
             List<PNode> independentTrees = TreeSplitter.FindIndependentTrees(pnode);
 
-            //Runner.Run(pnode);
+            List<Tuple<string, SemanticVersion>> solution = new List<Tuple<string, SemanticVersion>>();
+
+            foreach (PNode tree in independentTrees)
+            {
+                List<Tuple<string, SemanticVersion>>[] lineup = Participants.Collect(tree);
+
+                //Utils.PrintLineup(lineup);
+                //Console.WriteLine("iterations = {0}", Utils.CountIterations(lineup));
+                //Runner.Simulate(tree, lineup, true);
+
+                // apply policy, where policy is strictly filtering and sorting on the lineup structiure
+
+                // lineup registrations are ordered low to high version - reverse the order to find a solution using the latest
+                foreach (List<Tuple<string, SemanticVersion>> registration in lineup)
+                {
+                    registration.Reverse();
+                }
+
+                List<Tuple<string, SemanticVersion>> partial = Runner.FindFirst(tree, lineup);
+
+                if (partial == null)
+                {
+                    Console.Write("unable to find solution between: ");
+                    Utils.PrintDistinctRegistrations(lineup);
+                    Console.WriteLine();
+                }
+                else
+                {
+                    solution.AddRange(partial);
+                }
+            }
+
+            Utils.PrintPackages(solution);
         }
 
         static void Test4()
@@ -62,17 +96,6 @@ namespace Resolver
         {
             Gallery gallery = TestGallery.Create3();
             PNode node = MetadataTree.GetTree(new string[] { "D" }, gallery);
-            node.WriteTo(Console.Out);
-        }
-
-        static void Test6()
-        {
-            Gallery gallery = TestGallery.Create2();
-
-            Package application = new Package("$", "1.0.0",
-                new Dictionary<string, string> { { "A", "2.0.0" }, { "C", "1.0.0" } });
-            
-            PNode node = MetadataTree.GetTree(application, gallery);
             node.WriteTo(Console.Out);
         }
 

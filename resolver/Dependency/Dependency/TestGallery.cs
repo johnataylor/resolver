@@ -123,7 +123,7 @@ namespace Resolver
             gallery.AddPackage(new Package("E", "3.0.0", new Dictionary<string, string> { { "A", "(2.0.0,4.0.0]" }, { "B", "2.0.0" }, { "C", "2.0.0" } }));
             gallery.AddPackage(new Package("E", "3.5.0", new Dictionary<string, string> { { "A", "(2.0.0,4.0.0]" }, { "B", "2.0.0" }, { "C", "2.0.0" } }));
             gallery.AddPackage(new Package("E", "4.0.0", new Dictionary<string, string> { { "A", "(2.0.0,4.0.0]" }, { "B", "2.0.0" }, { "C", "2.0.0" } }));
-            gallery.AddPackage(new Package("E", "4.5.0", new Dictionary<string, string> { { "A", "[2.0.0]" }, { "B", "2.0.0" }, { "C", "2.0.0" } }));
+            //gallery.AddPackage(new Package("E", "4.5.0", new Dictionary<string, string> { { "A", "[2.0.0]" }, { "B", "2.0.0" }, { "C", "2.0.0" } }));
 
             gallery.AddPackage(new Package("F", "1.0.0", new Dictionary<string, string> { { "A", "2.0.0" }, { "B", "2.0.0" }, { "C", "2.0.0" } }));
             gallery.AddPackage(new Package("F", "1.5.0", new Dictionary<string, string> { { "A", "2.0.0" }, { "B", "2.0.0" }, { "C", "2.0.0" } }));
@@ -185,16 +185,16 @@ namespace Resolver
             gallery.AddPackage(new Package("J", "6.0.0"));
             gallery.AddPackage(new Package("J", "6.5.0"));
 
-            gallery.AddPackage(new Package("K", "1.0.0", new Dictionary<string, string> { { "I", "1.0.0" }, { "J", "1.0.0" } }));
-            gallery.AddPackage(new Package("K", "1.5.0", new Dictionary<string, string> { { "I", "1.0.0" }, { "J", "1.0.0" } }));
-            gallery.AddPackage(new Package("K", "2.0.0", new Dictionary<string, string> { { "I", "1.0.0" }, { "J", "1.0.0" } }));
-            gallery.AddPackage(new Package("K", "2.5.0", new Dictionary<string, string> { { "I", "1.0.0" }, { "J", "1.0.0" } }));
-            gallery.AddPackage(new Package("K", "3.0.0", new Dictionary<string, string> { { "I", "1.0.0" }, { "J", "1.0.0" } }));
-            gallery.AddPackage(new Package("K", "3.5.0", new Dictionary<string, string> { { "I", "1.0.0" }, { "J", "1.0.0" } }));
-            gallery.AddPackage(new Package("K", "4.0.0", new Dictionary<string, string> { { "I", "1.0.0" }, { "J", "1.0.0" } }));
-            gallery.AddPackage(new Package("K", "4.5.0", new Dictionary<string, string> { { "I", "1.0.0" }, { "J", "1.0.0" } }));
-            gallery.AddPackage(new Package("K", "5.0.0", new Dictionary<string, string> { { "I", "1.0.0" }, { "J", "1.0.0" } }));
-            gallery.AddPackage(new Package("K", "5.5.0", new Dictionary<string, string> { { "I", "1.0.0" }, { "J", "1.0.0" } }));
+            gallery.AddPackage(new Package("K", "1.0.0", new Dictionary<string, string> { { "I", "[1.0.0,5.0.0]" }, { "J", "[3.0.0,6.0.0]" } }));
+            gallery.AddPackage(new Package("K", "1.5.0", new Dictionary<string, string> { { "I", "[1.0.0,5.0.0]" }, { "J", "[3.0.0,6.0.0]" } }));
+            gallery.AddPackage(new Package("K", "2.0.0", new Dictionary<string, string> { { "I", "[1.0.0,5.0.0]" }, { "J", "[3.0.0,6.0.0]" } }));
+            gallery.AddPackage(new Package("K", "2.5.0", new Dictionary<string, string> { { "I", "[1.0.0,5.0.0]" }, { "J", "[3.0.0,6.0.0]" } }));
+            gallery.AddPackage(new Package("K", "3.0.0", new Dictionary<string, string> { { "I", "[1.0.0,5.0.0]" }, { "J", "[3.0.0,6.0.0]" } }));
+            gallery.AddPackage(new Package("K", "3.5.0", new Dictionary<string, string> { { "I", "[1.0.0,5.0.0]" }, { "J", "[3.0.0,6.0.0]" } }));
+            gallery.AddPackage(new Package("K", "4.0.0", new Dictionary<string, string> { { "I", "[1.0.0,5.0.0]" }, { "J", "[3.0.0,6.0.0]" } }));
+            gallery.AddPackage(new Package("K", "4.5.0", new Dictionary<string, string> { { "I", "[1.0.0,5.0.0]" }, { "J", "[3.0.0,6.0.0]" } }));
+            gallery.AddPackage(new Package("K", "5.0.0", new Dictionary<string, string> { { "I", "[1.0.0,5.0.0]" }, { "J", "[3.0.0,6.0.0]" } }));
+            gallery.AddPackage(new Package("K", "5.5.0", new Dictionary<string, string> { { "I", "[1.0.0,5.0.0]" }, { "J", "[3.0.0,6.0.0]" } }));
 
             return gallery;
         }

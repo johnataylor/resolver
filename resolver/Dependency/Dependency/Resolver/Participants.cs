@@ -9,7 +9,35 @@ namespace Resolver.Resolver
 {
     class Participants
     {
-        public static IDictionary<string, ISet<SemanticVersion>> GetParticipants(PNode pnode)
+        public static List<Tuple<string, SemanticVersion>>[] Collect(PNode pnode)
+        {
+            return SortParticipants(GetParticipants(pnode));
+        }
+
+        private static List<Tuple<string, SemanticVersion>>[] SortParticipants(IDictionary<string, ISet<SemanticVersion>> participants)
+        {
+            List<Tuple<string, SemanticVersion>>[] result = new List<Tuple<string, SemanticVersion>>[participants.Count];
+
+            int i = 0;
+
+            foreach (KeyValuePair<string, ISet<SemanticVersion>> participant in participants)
+            {
+                List<SemanticVersion> versions = new List<SemanticVersion>(participant.Value);
+                versions.Sort(SemanticVersionRange.DefaultComparer);
+
+                List<Tuple<string, SemanticVersion>> candidates = new List<Tuple<string, SemanticVersion>>();
+                foreach (SemanticVersion version in versions)
+                {
+                    candidates.Add(new Tuple<string, SemanticVersion>(participant.Key, version));
+                }
+
+                result[i++] = candidates;
+            }
+
+            return result;
+        }
+
+        private static IDictionary<string, ISet<SemanticVersion>> GetParticipants(PNode pnode)
         {
             IDictionary<string, ISet<SemanticVersion>> participants = new Dictionary<string, ISet<SemanticVersion>>();
             foreach (PVNode child in pnode.Children)
@@ -19,7 +47,7 @@ namespace Resolver.Resolver
             return participants;
         }
 
-        public static void GetParticipants(PVNode pvnode, IDictionary<string, ISet<SemanticVersion>> participants)
+        private static void GetParticipants(PVNode pvnode, IDictionary<string, ISet<SemanticVersion>> participants)
         {
             foreach (PNode child in pvnode.Children)
             {

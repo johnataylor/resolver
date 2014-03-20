@@ -7,8 +7,10 @@ using System.Threading.Tasks;
 
 namespace Resolver.Resolver
 {
-    public class MetadataTree
+    public static class MetadataTree
     {
+        //  Metadata tree building
+
         public static PNode GetTree(string[] packageIds, IGallery gallery)
         {
             PNode root = new PNode("$");
@@ -31,7 +33,7 @@ namespace Resolver.Resolver
             return root;
         }
 
-        public static PNode GetTree(Package package, IGallery gallery)
+        static PNode GetTree(Package package, IGallery gallery)
         {
             PNode root = new PNode(package.Id);
             InnerGetTree(package, gallery, root);
@@ -60,6 +62,8 @@ namespace Resolver.Resolver
             }
         }
 
+        //  Testing a candidate solution against a tree
+
         public static bool Satisfy(PNode pnode, List<Tuple<string, SemanticVersion>> candidate)
         {
             IDictionary<string, SemanticVersion> dictionary = new Dictionary<string, SemanticVersion>();
@@ -72,12 +76,14 @@ namespace Resolver.Resolver
             return Satisfy(pnode, dictionary);
         }
 
-        private static bool Satisfy(PNode pnode, IDictionary<string, SemanticVersion> dictionary)
+        static bool Satisfy(PNode pnode, IDictionary<string, SemanticVersion> dictionary)
         {
             if (pnode.Children.Count == 0)
             {
                 return true;
             }
+
+            // for a package ANY child can satisfy
 
             foreach (PVNode child in pnode.Children)
             {
@@ -90,7 +96,7 @@ namespace Resolver.Resolver
             return false;
         }
 
-        private static bool Satisfy(PVNode pvnode, string id, IDictionary<string, SemanticVersion> dictionary)
+        static bool Satisfy(PVNode pvnode, string id, IDictionary<string, SemanticVersion> dictionary)
         {
             if (dictionary.Contains(new KeyValuePair<string, SemanticVersion>(id, pvnode.Version), new KeySemantciVersionEqualityComparer()))
             {
@@ -98,6 +104,8 @@ namespace Resolver.Resolver
                 {
                     return true;
                 }
+
+                // for a particular version of a package ALL children must satisfy
 
                 foreach (PNode child in pvnode.Children)
                 {
@@ -118,7 +126,6 @@ namespace Resolver.Resolver
             {
                 return (x.Key == y.Key) && (SemanticVersionRange.DefaultComparer.Compare(x.Value, y.Value) == 0);
             }
-
             public override int GetHashCode(KeyValuePair<string, SemanticVersion> obj)
             {
                 return obj.GetHashCode(); 

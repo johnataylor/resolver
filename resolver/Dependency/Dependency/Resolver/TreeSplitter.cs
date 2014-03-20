@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Resolver.Metadata;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -28,7 +29,7 @@ namespace Resolver.Resolver
                 {
                     if (subtree.HasOverlap(participants))
                     {
-                        subtree.Roots.Add(pnode.Id);
+                        subtree.Roots.Add(pnode);
                         newSubtreeNeeded = false;
                         break;
                     }
@@ -37,7 +38,7 @@ namespace Resolver.Resolver
                 if (newSubtreeNeeded)
                 {
                     Subtree newSubtree = new Subtree();
-                    newSubtree.Roots.Add(pnode.Id);
+                    newSubtree.Roots.Add(pnode);
 
                     foreach (string s in participants)
                     {
@@ -54,17 +55,28 @@ namespace Resolver.Resolver
                 //Console.WriteLine();
             }
 
+            List<PNode> result = new List<PNode>();
+
             foreach (Subtree subtree in subtrees)
             {
-                subtree.Print();
+                PNode newRoot = new PNode("$");
+                PVNode newRootVersion = new PVNode(new SemanticVersion(0));
+                newRoot.Children.Add(newRootVersion);
+
+                foreach (PNode newRootChild in subtree.Roots)
+                {
+                    newRootVersion.Children.Add(newRootChild);
+                }
+
+                result.Add(newRoot);
             }
 
-            return null;
+            return result;
         }
 
         class Subtree
         {
-            public List<string> Roots = new List<string>();
+            public List<PNode> Roots = new List<PNode>();
             public HashSet<string> Participants = new HashSet<string>();
 
             public bool HasOverlap(HashSet<string> p)
@@ -81,9 +93,9 @@ namespace Resolver.Resolver
 
             public void Print()
             {
-                foreach (string s in Roots)
+                foreach (PNode pnode in Roots)
                 {
-                    Console.Write("{0} ", s);
+                    Console.Write("{0} ", pnode.Id);
                 }
                 Console.WriteLine();
             }
