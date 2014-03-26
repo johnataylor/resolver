@@ -21,9 +21,9 @@ namespace Resolver.Metadata
             foreach (Package package in Packages)
             {
                 writer.WriteLine("\t{0}", package.Version);
-                foreach (Dependency dependency in package.Dependencies)
+                foreach (KeyValuePair<string, Group> dependencyGroups in package.DependencyGroups)
                 {
-                    writer.WriteLine("\t\t{0} {1}", dependency.Id, dependency.Range);
+                    dependencyGroups.Value.WriteTo(writer);
                 }
             }
         }

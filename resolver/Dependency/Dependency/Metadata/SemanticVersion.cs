@@ -43,6 +43,14 @@ namespace Resolver.Metadata
             }
 
             //TODO: this is very basic parsing!!!
+
+            int index = s.IndexOf('-');
+
+            if (index > 0)
+            {
+                s = s.Substring(0, index);
+            }
+
             string[] fields = s.Split('.');
             int major = int.Parse(fields[0]);
             int minor = (fields.Length > 1) ? int.Parse(fields[1]) : 0;

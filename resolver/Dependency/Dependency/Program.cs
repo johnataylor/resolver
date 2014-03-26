@@ -35,16 +35,16 @@ namespace Resolver
 
         static void Test2()
         {
-            Gallery gallery = TestGallery.Create2();
-            PNode node = MetadataTree.GetTree(new string[] { "A" }, gallery);
-            node.WriteTo(Console.Out);
+            SemanticVersion sv0 = SemanticVersion.Parse("1.0.4.3225");
+            SemanticVersion sv1 = SemanticVersion.Parse("1.0.1-portableRC1");
+            SemanticVersion sv2 = SemanticVersion.Parse("1.0.0.2473");
         }
 
-        static void Test3()
+        static async Task Test3()
         {
             Gallery gallery = TestGallery.Create4();
-            PNode pnode = MetadataTree.GetTree(new string[] { "D", "E", "F", "G", "H", "K" }, gallery);
-            //PNode pnode = MetadataTree.GetTree(new string[] { "D", "E", "F", "G", "H" }, gallery);
+            PNode pnode = await MetadataTree.GetTree(new string[] { "D", "E", "F", "G", "H", "K" }, gallery, "all");
+            //PNode pnode = MetadataTree.GetTree(new string[] { "D", "E", "F", "G", "H" }, gallery, "all");
             
             //pnode.WriteTo(Console.Out);
 
@@ -85,18 +85,59 @@ namespace Resolver
             Utils.PrintPackages(solution);
         }
 
-        static void Test4()
+        static async Task Test4()
         {
-            Gallery gallery = TestGallery.Create2();
-            PNode node = MetadataTree.GetTree(new string[] { "C", "D" }, gallery);
-            node.WriteTo(Console.Out);
+            IGallery gallery = new RemoteGallery("http://nuget3.blob.core.windows.net/pub/");
+
+            DateTime before = DateTime.Now;
+
+            PNode pnode = await MetadataTree.GetTree(new string[] 
+            { 
+                "dotNetRdf",
+                "WindowsAzure.Storage",
+                "json-ld.net"
+            }, 
+            gallery, ".NETFramework4.0");
+
+            DateTime after = DateTime.Now;
+
+            Console.WriteLine("{0} seconds", (after - before).TotalSeconds);
+
+            List<PNode> independentTrees = TreeSplitter.FindIndependentTrees(pnode);
+
+            List<Tuple<string, SemanticVersion>> solution = new List<Tuple<string, SemanticVersion>>();
+
+            foreach (PNode tree in independentTrees)
+            {
+                List<Tuple<string, SemanticVersion>>[] lineup = Participants.Collect(tree);
+
+                foreach (List<Tuple<string, SemanticVersion>> registration in lineup)
+                {
+                    registration.Reverse();
+                }
+
+                List<Tuple<string, SemanticVersion>> partial = Runner.FindFirst(tree, lineup);
+
+                if (partial == null)
+                {
+                    Console.Write("unable to find solution between: ");
+                    Utils.PrintDistinctRegistrations(lineup);
+                    Console.WriteLine();
+                }
+                else
+                {
+                    solution.AddRange(partial);
+                }
+            }
+
+            Console.WriteLine("solution:");
+            Console.WriteLine();
+            Utils.PrintPackages(solution);
+            Console.WriteLine();
         }
 
         static void Test5()
         {
-            Gallery gallery = TestGallery.Create3();
-            PNode node = MetadataTree.GetTree(new string[] { "D" }, gallery);
-            node.WriteTo(Console.Out);
         }
 
         static Func<SemanticVersion, bool> Includes(SemanticVersion begin, SemanticVersionSpan span)
@@ -218,15 +259,31 @@ namespace Resolver
                 //Test0();
                 //Test1();
                 //Test2();
-                Test3();
-                //Test4();
+                //Test3().Wait();
+                Test4().Wait();
                 //Test5();
                 //Test6();
                 //Test7();
             }
+            //TODO: n-deep exception reporting
+            catch (AggregateException g)
+            {
+                foreach (Exception e in g.InnerExceptions)
+                {
+                    Console.WriteLine(e.Message);
+                    if (e.InnerException != null)
+                    {
+                        Console.WriteLine("\t{0}", e.InnerException.Message);
+                    }
+                }
+            }
             catch (Exception e)
             {
                 Console.WriteLine(e.Message);
+                if (e.InnerException != null)
+                {
+                    Console.WriteLine("\t{0}", e.InnerException.Message);
+                }
             }
         }
     }

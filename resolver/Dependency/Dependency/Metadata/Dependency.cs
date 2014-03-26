@@ -1,4 +1,6 @@
 ﻿
+using System.IO;
+
 namespace Resolver.Metadata
 {
     public class Dependency
@@ -16,6 +18,11 @@ namespace Resolver.Metadata
         public Dependency(string id, string range)
             : this(id, SemanticVersionRange.Parse(range))
         {
+        }
+
+        public void WriteTo(TextWriter writer)
+        {
+            writer.Write("{0} {1}", Id, Range);
         }
     }
 }

@@ -11,7 +11,7 @@ namespace Resolver.Resolver
     {
         //  Metadata tree building
 
-        public static PNode GetTree(string[] packageIds, IGallery gallery)
+        public static async Task<PNode> GetTree(string[] packageIds, IGallery gallery, string name)
         {
             PNode root = new PNode("$");
             PVNode rootVersion = new PVNode(SemanticVersion.Min);
@@ -19,47 +19,70 @@ namespace Resolver.Resolver
 
             foreach (string packageId in packageIds)
             {
-                Registration registration = gallery.GetRegistration(packageId);
+                Registration registration = await gallery.GetRegistration(packageId);
 
                 PNode pnode = new PNode(registration.Id);
                 rootVersion.Children.Add(pnode);
 
                 foreach (Package package in registration.Packages)
                 {
-                    InnerGetTree(package, gallery, pnode);
+                    await InnerGetTree(package, gallery, pnode, name);
                 }
             }
 
             return root;
         }
 
-        static PNode GetTree(Package package, IGallery gallery)
+        static async Task InnerGetTree(Package package, IGallery gallery, PNode parent, string name)
         {
-            PNode root = new PNode(package.Id);
-            InnerGetTree(package, gallery, root);
-            return root;
-        }
-
-        static void InnerGetTree(Package package, IGallery gallery, PNode parent)
-        {
-            PVNode pvnode = new PVNode(package.Version);
-            parent.Children.Add(pvnode);
-
-            foreach (Dependency dependency in package.Dependencies)
+            try
             {
-                Registration registration = gallery.GetRegistration(dependency.Id);
+                PVNode pvnode = new PVNode(package.Version);
+                parent.Children.Add(pvnode);
 
-                PNode pnode = new PNode(dependency.Id);
-                pvnode.Children.Add(pnode);
+                ICollection<Dependency> dependencies = GetDependencies(package, name);
 
-                foreach (Package nextPackage in registration.Packages)
+                if (dependencies != null)
                 {
-                    if (dependency.Range.Includes(nextPackage.Version))
+                    foreach (Dependency dependency in dependencies)
                     {
-                        InnerGetTree(nextPackage, gallery, pnode);
+                        Registration registration = await gallery.GetRegistration(dependency.Id);
+
+                        PNode pnode = new PNode(dependency.Id);
+                        pvnode.Children.Add(pnode);
+
+                        foreach (Package nextPackage in registration.Packages)
+                        {
+                            if (dependency.Range.Includes(nextPackage.Version))
+                            {
+                                await InnerGetTree(nextPackage, gallery, pnode, name);
+                            }
+                        }
                     }
                 }
             }
+            catch (Exception e)
+            {
+                throw new Exception(string.Format("package: {0}/{1}", package.Id, package.Version), e);
+            }
+        }
+
+        public static ICollection<Dependency> GetDependencies(Package package, string name)
+        {
+            ICollection<Dependency> dependencies = null;
+
+            //  really what is the correct logic here? (this is currently a fallback)
+            Group dependencyGroup;
+            if (package.DependencyGroups.TryGetValue(name, out dependencyGroup))
+            {
+                dependencies = dependencyGroup.Dependencies;
+            }
+            else if (package.DependencyGroups.TryGetValue("all", out dependencyGroup))
+            {
+                dependencies = dependencyGroup.Dependencies;
+            }
+
+            return dependencies;
         }
 
         //  Testing a candidate solution against a tree

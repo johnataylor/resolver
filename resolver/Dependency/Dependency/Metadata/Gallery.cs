@@ -16,14 +16,17 @@ namespace Resolver.Metadata
             _registrations = new Dictionary<string, Registration>();
         }
 
-        public Registration GetRegistration(string id)
+        public async Task<Registration> GetRegistration(string id)
         {
-            Registration registration;
-            if (_registrations.TryGetValue(id, out registration))
-            {
-                return registration;
-            }
-            throw new Exception(string.Format("{0} is not available from this gallery", id));
+            return await Task.Run<Registration>(() => {
+
+                Registration registration;
+                if (_registrations.TryGetValue(id, out registration))
+                {
+                    return registration;
+                }
+                throw new Exception(string.Format("{0} is not available from this gallery", id));
+            });
         }
 
         public void AddPackage(Package package)

@@ -7,25 +7,18 @@ namespace Resolver.Metadata
     {
         public string Id { get; private set; }
         public SemanticVersion Version { get; private set; }
-        public ICollection<Dependency> Dependencies { get; private set; }
+        public IDictionary<string, Group> DependencyGroups { get; private set; }
 
         public Package(string id, SemanticVersion version)
         {
             Id = id;
             Version = version;
-            Dependencies = new List<Dependency>();
+            DependencyGroups = new Dictionary<string, Group>();
         }
 
-        public Package(string id, string version, IDictionary<string, string> dependencies = null)
+        public Package(string id, string version)
             : this(id, SemanticVersion.Parse(version))
         {
-            if (dependencies != null)
-            {
-                foreach (KeyValuePair<string, string> dependency in dependencies)
-                {
-                    Dependencies.Add(new Dependency(dependency.Key, dependency.Value));
-                }
-            }
         }
     }
 }

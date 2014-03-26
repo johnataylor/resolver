@@ -8,6 +8,6 @@ namespace Resolver.Metadata
 {
     public interface IGallery
     {
-        Registration GetRegistration(string id);
+        Task<Registration> GetRegistration(string id);
     }
 }

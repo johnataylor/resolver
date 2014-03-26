@@ -42,7 +42,7 @@ namespace Resolver.Resolver
         {
             foreach (Tuple<string, SemanticVersion> package in packages)
             {
-                Console.Write("{0}/{1} ", package.Item1, package.Item2);
+                Console.WriteLine("{0}/{1} ", package.Item1, package.Item2);
             }
         }
 
