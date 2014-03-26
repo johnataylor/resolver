@@ -29,20 +29,11 @@ namespace Resolver.Resolver
             return iterations;
         }
 
-        public static void PrintLineup(List<Tuple<string, SemanticVersion>>[] lineup)
+        public static void PrintPackages(IDictionary<string, SemanticVersion> packages)
         {
-            foreach (List<Tuple<string, SemanticVersion>> registration in lineup)
+            foreach (KeyValuePair<string, SemanticVersion> package in packages)
             {
-                PrintPackages(registration);
-                Console.WriteLine();
-            }
-        }
-
-        public static void PrintPackages(List<Tuple<string, SemanticVersion>> packages)
-        {
-            foreach (Tuple<string, SemanticVersion> package in packages)
-            {
-                Console.WriteLine("{0}/{1} ", package.Item1, package.Item2);
+                Console.WriteLine("{0}/{1} ", package.Key, package.Value);
             }
         }
 

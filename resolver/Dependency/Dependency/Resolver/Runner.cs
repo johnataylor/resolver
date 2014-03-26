@@ -18,13 +18,16 @@ namespace Resolver.Resolver
 
             Permutations.Run(lineup, (candidate) =>
             {
-                if (MetadataTree.Satisfy(pnode, candidate))
+                IDictionary<string, SemanticVersion> result = new Dictionary<string, SemanticVersion>();
+                if (MetadataTree.Satisfy(pnode, candidate, result))
                 {
                     if (verbose)
                     {
                         Console.Write("GOOD: ");
                         Print(candidate);
                         Console.WriteLine();
+                        Console.Write("solution: ");
+                        Print(result);
                     }
                     good++;
                 }
@@ -46,14 +49,15 @@ namespace Resolver.Resolver
             Console.WriteLine("good: {0} bad: {1}", good, bad);
         }
 
-        public static List<Tuple<string, SemanticVersion>> FindFirst(PNode pnode, List<Tuple<string, SemanticVersion>>[] lineup)
+        public static IDictionary<string, SemanticVersion> FindFirst(PNode pnode, List<Tuple<string, SemanticVersion>>[] lineup)
         {
-            List<Tuple<string, SemanticVersion>> solution = null;
+            IDictionary<string, SemanticVersion> solution = null;
             Permutations.Run(lineup, (candidate) =>
             {
-                if (MetadataTree.Satisfy(pnode, candidate))
+                IDictionary<string, SemanticVersion> result = new Dictionary<string, SemanticVersion>();
+                if (MetadataTree.Satisfy(pnode, candidate, result))
                 {
-                    solution = candidate;
+                    solution = result;
                     return true;
                 }
                 return false;
@@ -66,6 +70,14 @@ namespace Resolver.Resolver
             foreach (Tuple<string, SemanticVersion> item in list)
             {
                 Console.Write("{0}/{1} ", item.Item1, item.Item2);
+            }
+        }
+
+        static void Print(IDictionary<string, SemanticVersion> dictionary)
+        {
+            foreach (KeyValuePair<string, SemanticVersion> item in dictionary)
+            {
+                Console.Write("{0}/{1} ", item.Key, item.Value);
             }
         }
     }

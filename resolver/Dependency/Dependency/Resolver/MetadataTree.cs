@@ -85,9 +85,11 @@ namespace Resolver.Resolver
             return dependencies;
         }
 
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
         //  Testing a candidate solution against a tree
 
-        public static bool Satisfy(PNode pnode, List<Tuple<string, SemanticVersion>> candidate)
+        public static bool Satisfy(PNode pnode, List<Tuple<string, SemanticVersion>> candidate, IDictionary<string, SemanticVersion> result)
         {
             IDictionary<string, SemanticVersion> dictionary = new Dictionary<string, SemanticVersion>();
             foreach (Tuple<string, SemanticVersion> item in candidate)
@@ -96,10 +98,15 @@ namespace Resolver.Resolver
             }
             dictionary.Add("$", new SemanticVersion(0));
 
-            return Satisfy(pnode, dictionary);
+            if (Satisfy(pnode, dictionary, result))
+            {
+                result.Remove("$");
+                return true;
+            }
+            return false;
         }
 
-        static bool Satisfy(PNode pnode, IDictionary<string, SemanticVersion> dictionary)
+        static bool Satisfy(PNode pnode, IDictionary<string, SemanticVersion> dictionary, IDictionary<string, SemanticVersion> result)
         {
             if (pnode.Children.Count == 0)
             {
@@ -110,7 +117,7 @@ namespace Resolver.Resolver
 
             foreach (PVNode child in pnode.Children)
             {
-                if (Satisfy(child, pnode.Id, dictionary))
+                if (Satisfy(child, pnode.Id, dictionary, result))
                 {
                     return true;
                 }
@@ -119,10 +126,12 @@ namespace Resolver.Resolver
             return false;
         }
 
-        static bool Satisfy(PVNode pvnode, string id, IDictionary<string, SemanticVersion> dictionary)
+        static bool Satisfy(PVNode pvnode, string id, IDictionary<string, SemanticVersion> dictionary, IDictionary<string, SemanticVersion> result)
         {
             if (dictionary.Contains(new KeyValuePair<string, SemanticVersion>(id, pvnode.Version), new KeySemantciVersionEqualityComparer()))
             {
+                result[id] = pvnode.Version;
+
                 if (pvnode.Children.Count == 0)
                 {
                     return true;
@@ -132,7 +141,7 @@ namespace Resolver.Resolver
 
                 foreach (PNode child in pvnode.Children)
                 {
-                    if (!Satisfy(child, dictionary))
+                    if (!Satisfy(child, dictionary, result))
                     {
                         return false;
                     }

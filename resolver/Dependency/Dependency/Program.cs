@@ -50,7 +50,7 @@ namespace Resolver
 
             List<PNode> independentTrees = TreeSplitter.FindIndependentTrees(pnode);
 
-            List<Tuple<string, SemanticVersion>> solution = new List<Tuple<string, SemanticVersion>>();
+            IDictionary<string, SemanticVersion> solution = new Dictionary<string, SemanticVersion>();
 
             foreach (PNode tree in independentTrees)
             {
@@ -68,7 +68,7 @@ namespace Resolver
                     registration.Reverse();
                 }
 
-                List<Tuple<string, SemanticVersion>> partial = Runner.FindFirst(tree, lineup);
+                IDictionary<string, SemanticVersion> partial = Runner.FindFirst(tree, lineup);
 
                 if (partial == null)
                 {
@@ -78,7 +78,10 @@ namespace Resolver
                 }
                 else
                 {
-                    solution.AddRange(partial);
+                    foreach (KeyValuePair<string, SemanticVersion> item in partial)
+                    {
+                        solution.Add(item);
+                    }
                 }
             }
 
@@ -105,7 +108,7 @@ namespace Resolver
 
             List<PNode> independentTrees = TreeSplitter.FindIndependentTrees(pnode);
 
-            List<Tuple<string, SemanticVersion>> solution = new List<Tuple<string, SemanticVersion>>();
+            IDictionary<string, SemanticVersion> solution = new Dictionary<string, SemanticVersion>();
 
             foreach (PNode tree in independentTrees)
             {
@@ -116,7 +119,7 @@ namespace Resolver
                     registration.Reverse();
                 }
 
-                List<Tuple<string, SemanticVersion>> partial = Runner.FindFirst(tree, lineup);
+                IDictionary<string, SemanticVersion> partial = Runner.FindFirst(tree, lineup);
 
                 if (partial == null)
                 {
@@ -126,7 +129,10 @@ namespace Resolver
                 }
                 else
                 {
-                    solution.AddRange(partial);
+                    foreach (KeyValuePair<string, SemanticVersion> item in partial)
+                    {
+                        solution.Add(item);
+                    }
                 }
             }
 
