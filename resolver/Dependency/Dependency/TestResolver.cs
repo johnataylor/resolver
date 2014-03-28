@@ -104,5 +104,57 @@ namespace Resolver
             Utils.PrintPackages(solution);
             Console.WriteLine();
         }
+
+        public static async Task Test2()
+        {
+            IGallery gallery = new RemoteGallery("http://nuget3.blob.core.windows.net/pub/");
+
+            DateTime before = DateTime.Now;
+
+            PNode pnode = await MetadataTree.GetTree(new string[] 
+            { 
+                "entityframework"
+            },
+            gallery, ".NETFramework4.0");
+
+            DateTime after = DateTime.Now;
+
+            Console.WriteLine("{0} seconds", (after - before).TotalSeconds);
+
+            List<PNode> independentTrees = TreeSplitter.FindIndependentTrees(pnode);
+
+            IDictionary<string, SemanticVersion> solution = new Dictionary<string, SemanticVersion>();
+
+            foreach (PNode tree in independentTrees)
+            {
+                List<Tuple<string, SemanticVersion>>[] lineup = Participants.Collect(tree);
+
+                foreach (List<Tuple<string, SemanticVersion>> registration in lineup)
+                {
+                    registration.Reverse();
+                }
+
+                IDictionary<string, SemanticVersion> partial = Runner.FindFirst(tree, lineup);
+
+                if (partial == null)
+                {
+                    Console.Write("unable to find solution between: ");
+                    Utils.PrintDistinctRegistrations(lineup);
+                    Console.WriteLine();
+                }
+                else
+                {
+                    foreach (KeyValuePair<string, SemanticVersion> item in partial)
+                    {
+                        solution.Add(item);
+                    }
+                }
+            }
+
+            Console.WriteLine("solution:");
+            Console.WriteLine();
+            Utils.PrintPackages(solution);
+            Console.WriteLine();
+        }
     }
 }

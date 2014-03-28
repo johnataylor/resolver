@@ -11,15 +11,15 @@ namespace Resolver.Resolver
     {
         //  Metadata tree building
 
-        public static async Task<PNode> GetTree(string[] packageIds, IGallery gallery, string name)
+        public static async Task<PNode> GetTree(string[] registrationIds, IGallery gallery, string name)
         {
             PNode root = new PNode("$");
             PVNode rootVersion = new PVNode(SemanticVersion.Min);
             root.Children.Add(rootVersion);
 
-            foreach (string packageId in packageIds)
+            foreach (string registrationId in registrationIds)
             {
-                Registration registration = await gallery.GetRegistration(packageId);
+                Registration registration = await gallery.GetRegistration(registrationId);
 
                 PNode pnode = new PNode(registration.Id);
                 rootVersion.Children.Add(pnode);

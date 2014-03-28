@@ -35,7 +35,7 @@ namespace Resolver.Metadata
 
         public async Task<Registration> InnerGetRegistration(string registrationId)
         {
-            string address = (_source.Trim('/') + '/' + registrationId).ToLowerInvariant();
+            string address = (_source.Trim('/') + '/' + registrationId + ".json").ToLowerInvariant();
 
             Console.WriteLine(address);
 
