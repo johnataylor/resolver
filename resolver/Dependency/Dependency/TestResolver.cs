@@ -53,7 +53,8 @@ namespace Resolver
 
         public static async Task Test1()
         {
-            IGallery gallery = new RemoteGallery("http://nuget3.blob.core.windows.net/pub/");
+            //IGallery gallery = new RemoteGallery("http://nuget3.blob.core.windows.net/pub/");
+            IGallery gallery = new RemoteGallery("http://localhost:8000/pub/");
 
             DateTime before = DateTime.Now;
 
@@ -107,7 +108,8 @@ namespace Resolver
 
         public static async Task Test2()
         {
-            IGallery gallery = new RemoteGallery("http://nuget3.blob.core.windows.net/pub/");
+            //IGallery gallery = new RemoteGallery("http://nuget3.blob.core.windows.net/pub/");
+            IGallery gallery = new RemoteGallery("http://localhost:8000/pub/");
 
             DateTime before = DateTime.Now;
 
