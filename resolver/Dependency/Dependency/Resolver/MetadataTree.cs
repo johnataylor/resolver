@@ -22,12 +22,16 @@ namespace Resolver.Resolver
                 Registration registration = await gallery.GetRegistration(registrationId);
 
                 PNode pnode = new PNode(registration.Id);
-                rootVersion.Children.Add(pnode);
+                rootVersion.AddChild(pnode);
+
+                List<Task> trees = new List<Task>(registration.Packages.Count);
 
                 foreach (Package package in registration.Packages)
                 {
-                    await InnerGetTree(package, gallery, pnode, name);
+                    trees.Add(InnerGetTree(package, gallery, pnode, name));
                 }
+
+                await Task.WhenAll(trees.ToArray());
             }
 
             return root;
@@ -44,20 +48,26 @@ namespace Resolver.Resolver
 
                 if (dependencies != null)
                 {
+                    TaskCompletionSource<int> source = new TaskCompletionSource<int>();
+
                     foreach (Dependency dependency in dependencies)
                     {
                         Registration registration = await gallery.GetRegistration(dependency.Id);
 
                         PNode pnode = new PNode(dependency.Id);
-                        pvnode.Children.Add(pnode);
+                        pvnode.AddChild(pnode);
+
+                        List<Task> trees = new List<Task>(registration.Packages.Count);
 
                         foreach (Package nextPackage in registration.Packages)
                         {
                             if (dependency.Range.Includes(nextPackage.Version))
                             {
-                                await InnerGetTree(nextPackage, gallery, pnode, name);
+                                trees.Add(InnerGetTree(nextPackage, gallery, pnode, name));
                             }
                         }
+
+                        await Task.WhenAll(trees.ToArray());
                     }
                 }
             }

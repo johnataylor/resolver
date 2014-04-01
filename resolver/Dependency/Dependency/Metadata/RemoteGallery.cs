@@ -14,24 +14,30 @@ namespace Resolver.Metadata
     {
         string _source;
 
-        IDictionary<string, Registration> _cache;
+        IDictionary<string, Task<Registration>> _cache;
 
         public RemoteGallery(string source)
         {
             _source = source;
-            _cache = new Dictionary<string, Registration>();
+            _cache = new Dictionary<string, Task<Registration>>();
         }
 
-        public async Task<Registration> GetRegistration(string registrationId)
+        public Task<Registration> GetRegistration(string registrationId)
         {
-            Registration registration;
-            if (!_cache.TryGetValue(registrationId, out registration))
+            Task<Registration> registration;
+            lock (_cache)
             {
-                registration = await InnerGetRegistration(registrationId);
-                _cache.Add(registrationId, registration);
+                if (!_cache.TryGetValue(registrationId, out registration))
+                {
+                    Console.WriteLine("Not found in cache {0}", registrationId);
+                    registration = InnerGetRegistration(registrationId);
+                    _cache.Add(registrationId, registration);
+                }
             }
+            Console.WriteLine("Found in cache {0}", registrationId);
             return registration;
         }
+
 
         public async Task<Registration> InnerGetRegistration(string registrationId)
         {

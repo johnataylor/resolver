@@ -65,7 +65,7 @@ namespace Resolver.Resolver
 
                 foreach (PNode newRootChild in subtree.Roots)
                 {
-                    newRootVersion.Children.Add(newRootChild);
+                    newRootVersion.AddChild(newRootChild);
                 }
 
                 result.Add(newRoot);

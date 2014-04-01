@@ -8,12 +8,28 @@ namespace Resolver.Resolver
     {
         public SemanticVersion Version { get; private set; }
 
-        public List<PNode> Children { get; private set; }
+        private List<PNode> _children;
+
+        public IReadOnlyList<PNode> Children
+        {
+            get
+            {
+                return _children;
+            }
+        }
+
+        public void AddChild(PNode child)
+        {
+            lock (_children)
+            {
+                _children.Add(child);
+            }
+        }
 
         public PVNode(SemanticVersion version)
         {
             Version = version;
-            Children = new List<PNode>();
+            _children = new List<PNode>();
         }
 
         public void WriteTo(TextWriter writer, int indent = 0)
