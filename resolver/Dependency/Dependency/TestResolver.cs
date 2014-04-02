@@ -158,5 +158,25 @@ namespace Resolver
             Utils.PrintPackages(solution);
             Console.WriteLine();
         }
+
+        public static async Task Test3()
+        {
+            //IGallery gallery = new RemoteGallery("http://nuget3.blob.core.windows.net/pub/");
+            IGallery gallery = new RemoteGallery("http://localhost:8000/pub/");
+
+            DateTime before = DateTime.Now;
+
+            PNode pnode = await MetadataTree.GetTree(new string[] 
+            { 
+                "native"
+            },
+            gallery, ".NETFramework4.0");
+
+            DateTime after = DateTime.Now;
+
+            Console.WriteLine("{0} seconds", (after - before).TotalSeconds);
+
+
+        }
     }
 }

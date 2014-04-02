@@ -9,11 +9,18 @@ namespace Resolver.Metadata
 {
     public class Group
     {
+        public string Name { get; set; }
+
+        public string TargetFramework { get; set; }
+
         public ICollection<Dependency> Dependencies { get; private set; }
+
+        public IDictionary<string, string> Properties { get; private set; }
 
         public Group()
         {
             Dependencies = new List<Dependency>();
+            Properties = new Dictionary<string, string>();
         }
 
         public void WriteTo(TextWriter writer)

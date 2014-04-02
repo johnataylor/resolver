@@ -78,15 +78,36 @@ namespace Resolver.Metadata
                         foreach (JObject jobjectGroup in jarrayGroups)
                         {
                             string groupTargetFramework = "all";
+
                             JToken jtokenTargetFramework;
                             if (jobjectGroup.TryGetValue("targetFramework", out jtokenTargetFramework))
                             {
                                 groupTargetFramework = jtokenTargetFramework.ToObject<string>();
                             }
 
-                            Group group = new Group();
+                            string groupName = string.Empty;
 
-                            package.DependencyGroups.Add(groupTargetFramework, group);
+                            JToken jtokenGroupName;
+                            if (jobjectGroup.TryGetValue("name", out jtokenGroupName))
+                            {
+                                groupName = jtokenGroupName.ToObject<string>();
+                            }
+
+                            Group group = new Group
+                            {
+                                Name = groupName,
+                                TargetFramework = groupTargetFramework
+                            };
+
+                            JToken jtokenGroupProperty;
+                            if (jobjectGroup.TryGetValue("property", out jtokenGroupProperty))
+                            {
+                                AddProperties(group.Properties, (JArray)jtokenGroupProperty);
+                            }
+
+                            string groupKey = string.IsNullOrEmpty(groupName) ? groupTargetFramework : groupName;
+
+                            package.DependencyGroups.Add(groupKey, group);
 
                             JArray jarrayDependency = (JArray)jobjectGroup["dependency"];
 
@@ -101,7 +122,15 @@ namespace Resolver.Metadata
                                     dependencyRange = jtokenRange.ToObject<string>();
                                 }
 
-                                group.Dependencies.Add(new Dependency(dependencyId, dependencyRange));
+                                Dependency dependency = new Dependency(dependencyId, dependencyRange);
+
+                                JToken jtokenGroupDependencyProperty;
+                                if (jobjectDependencyPart.TryGetValue("property", out jtokenGroupDependencyProperty))
+                                {
+                                    AddProperties(dependency.Properties, (JArray)jtokenGroupDependencyProperty);
+                                }
+
+                                group.Dependencies.Add(dependency);
                             }
                         }
                     }
@@ -111,6 +140,14 @@ namespace Resolver.Metadata
             }
 
             throw new Exception(string.Format("unable to load: {0}", registrationId));
+        }
+
+        static void AddProperties(IDictionary<string, string> destination, JArray source)
+        {
+            foreach (JObject property in source)
+            {
+                destination.Add(property["name"].ToObject<string>(), property["value"].ToObject<string>());
+            }
         }
     }
 }

@@ -29,8 +29,10 @@ namespace Resolver
                 //TestSemanticVersion.Test2();
 
                 //TestResolver.Test0().Wait();
-                TestResolver.Test1().Wait();
+                TestResolver.Test1().Wait();        // this is a good test
                 //TestResolver.Test2().Wait();
+
+                //TestResolver.Test3().Wait();          //  native
             }
             catch (AggregateException g)
             {
